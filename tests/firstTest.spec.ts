@@ -37,6 +37,26 @@ test('Locator syntax rules', async({page}) => {
   page.locator(':text-is("Using the Grid")')
 })
 
+test('User facing locators', async ({page}) => {
+  
+  //By Role
+  await page.getByRole('textbox', {name: "Email"}).first().click();
+  await page.getByRole('button', {name: "Sign in"}).first().click();
+
+  //By Label
+  await page.getByLabel('Email').first().click();
+
+  //By Place Holder
+  await page.getByPlaceholder('Jane Doe').click();
+
+  //By Text
+  await page.getByText('Using the Grid').click();
+
+  //By Title
+  await page.getByTitle('IoT Dashboard').click();
+
+})
+
 
 
 
