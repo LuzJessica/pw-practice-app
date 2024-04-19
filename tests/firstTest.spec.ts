@@ -57,6 +57,29 @@ test('User facing locators', async ({page}) => {
 
 })
 
+test('locating child elements', async({page}) => {
+  await page.locator('nb-card nb-radio :text-is("Option 1")').click();// in this case we need to use space
+  await page.locator('nb-card').locator('nb-radio').locator(':text-is("Option 2")').click();
+
+  await page.locator('nb-card').getByRole('button', {name: "Sign in"}).first().click();
+
+  //await page.locator('nb.card').nth(3).getByRole('button').click();//avoid use nth to select elements because they can change order and we can access other element instead
+})
+
+test('locating parent elements', async({page}) => {
+  await page.locator('nb-card', {hasText: "Using the Grid"}).getByRole('textbox', {name: "Email"}).click();
+  await page.locator('nb-card', {has: page.locator('#inputEmail1')}).getByRole('textbox', {name: "Email"}).click();
+
+  await page.locator('nb-card').filter({hasText: "Basic Form"}).getByRole('textbox', {name: "Email"}).click();
+  await page.locator('nb-card').filter({has: page.locator('#exampleInputEmail1')}).getByRole('textbox', {name: "Email"}).click();
+
+  await page.locator('nb-card').filter({has:page.locator('.status-danger')}).getByRole('textbox', {name: "Password"}).click();
+
+  await page.locator('nb-card').filter({has: page.locator('nb-checkbox')}).filter({hasText: "Sign in"}).getByRole('textbox', {name: "Email"}).click();
+
+  await page.locator(':text-is("Using the Grid")').locator('..').getByRole('textbox', {name: "Email"}).click();//possible but not recommended
+})
+
 
 
 
