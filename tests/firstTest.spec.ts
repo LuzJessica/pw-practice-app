@@ -1,4 +1,4 @@
-import { test } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 import { first } from "rxjs-compat/operator/first";
 
 //it means we will execute this before all suites we have
@@ -78,6 +78,23 @@ test('locating parent elements', async({page}) => {
   await page.locator('nb-card').filter({has: page.locator('nb-checkbox')}).filter({hasText: "Sign in"}).getByRole('textbox', {name: "Email"}).click();
 
   await page.locator(':text-is("Using the Grid")').locator('..').getByRole('textbox', {name: "Email"}).click();//possible but not recommended
+})
+
+test('Reusing the locators', async ({page}) => {
+  
+  const basicForm = page.locator('nb-card', {hasText: "Basic form"});
+  const emailField = basicForm.getByRole('textbox', {name: "Email"});
+  const passwordField = basicForm.getByRole('textbox', {name: "Password"});
+  const checkMeOutCheckBox = basicForm.locator('.custom-checkbox');
+  const submitButton = basicForm.getByRole('button');
+  
+
+  await emailField.fill('test@test.com');
+  await passwordField.fill('Test123');
+  await checkMeOutCheckBox.click();
+  await submitButton.click();
+
+  await expect(emailField).toHaveValue('test@test.com');
 })
 
 
