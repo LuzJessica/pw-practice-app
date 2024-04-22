@@ -117,6 +117,24 @@ test ('extracting values', async ({page}) => {
 
 })
 
+test ('assertions', async ({page}) => {
+
+  //General assertions
+  const value = 5;
+  expect(value).toEqual(5);
+  
+  const basicFormButton = page.locator('nb-card').filter({hasText: "Basic form"}).locator('button');
+  const text = await basicFormButton.textContent();
+  expect(text).toEqual('Submit');
+
+  //Locator assertion
+  await expect(basicFormButton).toHaveText('Submit');
+
+  //Soft assertions - For this case even if the test fails, next text will run
+  //await expect.soft(basicFormButton).toHaveText('Submit5');
+  await basicFormButton.click()
+})
+
 
 
 
