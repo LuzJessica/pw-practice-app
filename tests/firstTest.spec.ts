@@ -2,10 +2,11 @@ import { test, expect } from "@playwright/test";
 import { first } from "rxjs-compat/operator/first";
 
 //it means we will execute this before all suites we have
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page }, testInfo) => {
   await page.goto("http://localhost:4200/");
   await page.getByText("Forms").click();
   await page.getByText("Form Layouts").click();
+  testInfo.setTimeout(testInfo.timeout + 2000);//applied on every test on this particular test suite
 });
 
 test('Locator syntax rules', async({page}) => {
@@ -134,6 +135,8 @@ test ('assertions', async ({page}) => {
   //await expect.soft(basicFormButton).toHaveText('Submit5');
   await basicFormButton.click()
 })
+
+
 
 
 
