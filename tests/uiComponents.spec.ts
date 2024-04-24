@@ -89,6 +89,20 @@ test.describe("Form Layouts page", () => {
         
     }
 
+  })
+
+  test('tooltips', async ({ page }) => {
+
+    await page.getByTitle('Modal & Overlays').click();
+    await page.getByTitle('Tooltip').click();
+
+    const toolTipCard = page.locator('nb-card', {hasText: 'Tooltip Placements'});
+    await toolTipCard.getByRole('button', {name: 'TOP'}).hover();
+
+    page.getByRole('tooltip')//If you have a role tooltip created. Not the case for this project
+    const toolTip = await page.locator('nb-tooltip').textContent();
+    expect(toolTip).toEqual('This is a tooltip');
+
 
   })
 
