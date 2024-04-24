@@ -58,4 +58,38 @@ test.describe("Form Layouts page", () => {
     }
   })
 
+  test('list and dropdowns', async ({ page }) => {
+
+    const dropDownMenu = page.locator('.select-button');
+    await dropDownMenu.click()
+
+    page.getByRole('list'); //used when the list has as UL tag
+    page.getByRole('listitem');//used when the list has a LI tag
+
+    const optionList = page.locator('nb-option-list nb-option');
+    await(expect(optionList).toHaveText(["Light", "Dark", "Cosmic", "Corporate"]));//validate the options of the list
+    await optionList.filter({hasText: "Cosmic"}).click();//it filters one value of the list and select(click) it
+    const header = page.locator('nb-layout-header');
+    await expect(header).toHaveCSS('background-color', 'rgb(50, 50, 89)');
+
+    const colors = {
+        "Light": "rgb(255, 255, 255)",
+        "Dark": "rgb(34, 43, 69)",
+        "Cosmic": "rgb(50, 50, 89)",
+        "Corporate": "rgb(255, 255, 255)",
+    }
+
+    await dropDownMenu.click();
+    for(const color in colors){
+        await optionList.filter({hasText: color}).click();
+        await expect(header).toHaveCSS('background-color', colors[color]);
+        if(color != 'Corporate'){
+            await dropDownMenu.click();
+        }
+        
+    }
+
+
+  })
+
 });
