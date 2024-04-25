@@ -30,94 +30,167 @@ test.describe("Form Layouts page", () => {
   });
 
   test("radio buttons", async ({ page }) => {
+    const usingTheGridForm = page.locator("nb-card", {
+      hasText: "Using the Grid",
+    });
 
-    const usingTheGridForm = page.locator("nb-card", { hasText: "Using the Grid" });
-    
-    await usingTheGridForm.getByRole('radio', {name: 'Option 1'}).check({force: true});
-    const radioStatus = await usingTheGridForm.getByRole('radio', {name: 'Option 1'}).isChecked();//for generic assertion
+    await usingTheGridForm
+      .getByRole("radio", { name: "Option 1" })
+      .check({ force: true });
+    const radioStatus = await usingTheGridForm
+      .getByRole("radio", { name: "Option 1" })
+      .isChecked(); //for generic assertion
     expect(radioStatus).toBeTruthy();
-    await expect(usingTheGridForm.getByRole('radio', {name: 'Option 1'})).toBeChecked();//for locator assertion
+    await expect(
+      usingTheGridForm.getByRole("radio", { name: "Option 1" })
+    ).toBeChecked(); //for locator assertion
 
-    await usingTheGridForm.getByRole('radio', {name: 'Option 2'}).check({force:true});
-    expect(await usingTheGridForm.getByRole('radio', {name: 'Option 1'}).isChecked()).toBeFalsy();//unselected 
-    expect(await usingTheGridForm.getByRole('radio', {name: 'Option 2'}).isChecked()).toBeTruthy();//selected
+    await usingTheGridForm
+      .getByRole("radio", { name: "Option 2" })
+      .check({ force: true });
+    expect(
+      await usingTheGridForm
+        .getByRole("radio", { name: "Option 1" })
+        .isChecked()
+    ).toBeFalsy(); //unselected
+    expect(
+      await usingTheGridForm
+        .getByRole("radio", { name: "Option 2" })
+        .isChecked()
+    ).toBeTruthy(); //selected
   });
 
-  test('checkboxed', async ({ page }) => {
+  test("checkboxed", async ({ page }) => {
+    await page.getByTitle("Modal & Overlays").click();
+    await page.getByTitle("Toastr").click();
 
-    await page.getByTitle('Modal & Overlays').click();
-    await page.getByTitle('Toastr').click();
+    await page
+      .getByRole("checkbox", { name: "Hide on click" })
+      .uncheck({ force: true });
+    await page
+      .getByRole("checkbox", { name: "Prevent arising of duplicate toast" })
+      .check({ force: true });
 
-    await page.getByRole('checkbox', {name: 'Hide on click'}).uncheck({force:true});
-    await page.getByRole('checkbox', {name: 'Prevent arising of duplicate toast'}).check({force:true});
-
-    const allCheckboxes = page.getByRole('checkbox');
-    for(const checkbox of await allCheckboxes.all()){
-        await checkbox.uncheck({force:true});
-        expect(await checkbox.isChecked()).toBeFalsy();
+    const allCheckboxes = page.getByRole("checkbox");
+    for (const checkbox of await allCheckboxes.all()) {
+      await checkbox.uncheck({ force: true });
+      expect(await checkbox.isChecked()).toBeFalsy();
     }
-  })
+  });
 
-  test('list and dropdowns', async ({ page }) => {
+  test("list and dropdowns", async ({ page }) => {
+    const dropDownMenu = page.locator(".select-button");
+    await dropDownMenu.click();
 
-    const dropDownMenu = page.locator('.select-button');
-    await dropDownMenu.click()
+    page.getByRole("list"); //used when the list has as UL tag
+    page.getByRole("listitem"); //used when the list has a LI tag
 
-    page.getByRole('list'); //used when the list has as UL tag
-    page.getByRole('listitem');//used when the list has a LI tag
-
-    const optionList = page.locator('nb-option-list nb-option');
-    await(expect(optionList).toHaveText(["Light", "Dark", "Cosmic", "Corporate"]));//validate the options of the list
-    await optionList.filter({hasText: "Cosmic"}).click();//it filters one value of the list and select(click) it
-    const header = page.locator('nb-layout-header');
-    await expect(header).toHaveCSS('background-color', 'rgb(50, 50, 89)');
+    const optionList = page.locator("nb-option-list nb-option");
+    await expect(optionList).toHaveText([
+      "Light",
+      "Dark",
+      "Cosmic",
+      "Corporate",
+    ]); //validate the options of the list
+    await optionList.filter({ hasText: "Cosmic" }).click(); //it filters one value of the list and select(click) it
+    const header = page.locator("nb-layout-header");
+    await expect(header).toHaveCSS("background-color", "rgb(50, 50, 89)");
 
     const colors = {
-        "Light": "rgb(255, 255, 255)",
-        "Dark": "rgb(34, 43, 69)",
-        "Cosmic": "rgb(50, 50, 89)",
-        "Corporate": "rgb(255, 255, 255)",
-    }
+      Light: "rgb(255, 255, 255)",
+      Dark: "rgb(34, 43, 69)",
+      Cosmic: "rgb(50, 50, 89)",
+      Corporate: "rgb(255, 255, 255)",
+    };
 
     await dropDownMenu.click();
-    for(const color in colors){
-        await optionList.filter({hasText: color}).click();
-        await expect(header).toHaveCSS('background-color', colors[color]);
-        if(color != 'Corporate'){
-            await dropDownMenu.click();
-        }
-        
+    for (const color in colors) {
+      await optionList.filter({ hasText: color }).click();
+      await expect(header).toHaveCSS("background-color", colors[color]);
+      if (color != "Corporate") {
+        await dropDownMenu.click();
+      }
     }
+  });
 
-  })
+  test("tooltips", async ({ page }) => {
+    await page.getByTitle("Modal & Overlays").click();
+    await page.getByTitle("Tooltip").click();
 
-  test('tooltips', async ({ page }) => {
+    const toolTipCard = page.locator("nb-card", {
+      hasText: "Tooltip Placements",
+    });
+    await toolTipCard.getByRole("button", { name: "TOP" }).hover();
 
-    await page.getByTitle('Modal & Overlays').click();
-    await page.getByTitle('Tooltip').click();
+    page.getByRole("tooltip"); //If you have a role tooltip created. Not the case for this project
+    const toolTip = await page.locator("nb-tooltip").textContent();
+    expect(toolTip).toEqual("This is a tooltip");
+  });
 
-    const toolTipCard = page.locator('nb-card', {hasText: 'Tooltip Placements'});
-    await toolTipCard.getByRole('button', {name: 'TOP'}).hover();
+  test("dialog boxes", async ({ page }) => {
+    await page.getByTitle("Tables & Data").click();
+    await page.getByTitle("Smart Table").click();
 
-    page.getByRole('tooltip')//If you have a role tooltip created. Not the case for this project
-    const toolTip = await page.locator('nb-tooltip').textContent();
-    expect(toolTip).toEqual('This is a tooltip');
+    page.on("dialog", (dialog) => {
+      expect(dialog.message()).toEqual("Are you sure you want to delete?");
+      dialog.accept();
+    });
 
-  })
+    await page
+      .getByRole("table")
+      .locator("tr", { hasText: "mdo@gmail.com" })
+      .locator(".nb-trash")
+      .click();
+    await expect(page.locator("table tr").first()).not.toHaveText(
+      "mdo@gmail.com"
+    );
+  });
 
-  test('dialog boxes', async ({page}) => {
-    await page.getByTitle('Tables & Data').click();
-    await page.getByTitle('Smart Table').click();
-    
+  test("web tables", async ({ page }) => {
+    await page.getByTitle("Tables & Data").click();
+    await page.getByTitle("Smart Table").click();
 
-    page.on('dialog', dialog => {
-        expect(dialog.message()).toEqual('Are you sure you want to delete?');
-        dialog.accept();
-    })
+    //How to get a row by  any text in this row
+    const targetRow = page.getByRole("row", { name: "twitter@outlook.com" }); //use if have unique text
+    await targetRow.locator(".nb-edit").click();
 
-    await page.getByRole('table').locator('tr', {hasText: "mdo@gmail.com"}).locator('.nb-trash').click();
-    await expect(page.locator('table tr').first()).not.toHaveText('mdo@gmail.com');
+    await page.locator("input-editor").getByPlaceholder("Age").clear();
+    await page.locator("input-editor").getByPlaceholder("Age").fill("35");
+    await page.locator(".nb-checkmark").click();
 
-  })
+    //how to get a row based on the value in the specific column
+    await page.locator(".ng2-smart-pagination-nav").getByText("2").click();
+    const targetRowId = page
+      .getByRole("row", { name: "11" })
+      .filter({ has: page.locator("td").nth(1).getByText("11") });
+    await targetRowId.locator(".nb-edit").click();
+    await page.locator("input-editor").getByPlaceholder("E-mail").clear();
+    await page
+      .locator("input-editor")
+      .getByPlaceholder("E-mail")
+      .fill("test@test.com");
+    await page.locator(".nb-checkmark").click();
+    await expect(targetRowId.locator("td").nth(5)).toHaveText("test@test.com");
 
+    //test filter of the table
+
+    //identify testdatas we want to use
+    const ages = ["20", "30", "40", "200"];
+
+    for (let age of ages) {
+      await page.locator("input-filter").getByPlaceholder("Age").clear();
+      await page.locator("input-filter").getByPlaceholder("Age").fill(age);
+      await page.waitForTimeout(500);
+
+      const ageRows = page.locator('tbody tr');
+      for(let row of await ageRows.all()){
+        const cellValue = await row.locator('td').last().textContent();
+        if(age != '200'){
+            expect(cellValue).toEqual(age);
+        }else expect(cellValue).toEqual(' No data found ');
+        
+      }
+
+    }
+  });
 });
