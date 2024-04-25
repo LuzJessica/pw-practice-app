@@ -182,15 +182,49 @@ test.describe("Form Layouts page", () => {
       await page.locator("input-filter").getByPlaceholder("Age").fill(age);
       await page.waitForTimeout(500);
 
-      const ageRows = page.locator('tbody tr');
-      for(let row of await ageRows.all()){
-        const cellValue = await row.locator('td').last().textContent();
-        if(age != '200'){
-            expect(cellValue).toEqual(age);
-        }else expect(cellValue).toEqual(' No data found ');
-        
+      const ageRows = page.locator("tbody tr");
+      for (let row of await ageRows.all()) {
+        const cellValue = await row.locator("td").last().textContent();
+        if (age != "200") {
+          expect(cellValue).toEqual(age);
+        } else expect(cellValue).toEqual(" No data found ");
+      }
+    }
+  });
+
+  test("datepicker", async ({ page }) => {
+    await page.getByTitle("Forms").click();
+    await page.getByTitle("Datepicker").click();
+
+    const calendarInputField = page.getByPlaceholder("Form Picker");
+    await calendarInputField.click();
+
+    let date = new Date();
+    date.setDate(date.getDate() + 14);
+    const expectedDate = date.getDate().toString();
+    const expectedMonthShort = date.toLocaleString("En-US", { month: "short" });
+    const expectedMonthLong = date.toLocaleString("En-US", { month: "long" });
+    const expectedYear = date.getFullYear();
+    const dateToAssert = `${expectedMonthShort} ${expectedDate}, ${expectedYear}`;
+
+    let calendarMonthAndYear = await page
+      .locator("nb-calendar-view-mode")
+      .textContent();
+    const expectedMonthAndYear = ` ${expectedMonthLong} ${expectedYear} `;
+    while (!calendarMonthAndYear.includes(expectedMonthAndYear)) {
+        await page
+          .locator('nb-calendar-pageable-navigation [data-name="chevron-right"]')
+          .click();
+        calendarMonthAndYear = await page
+          .locator("nb-calendar-view-mode")
+          .textContent();
       }
 
-    }
+    await page
+      .locator('[class="day-cell ng-star-inserted"]')
+      .getByText(expectedDate, { exact: true }) //when we look for 1, playwright understand that 10, 11, 12 also has 1 and bring it as possible values so we need to specify we only want the value 1
+      .click();
+
+    await expect(calendarInputField).toHaveValue(dateToAssert);
   });
 });
