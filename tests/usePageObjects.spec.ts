@@ -1,5 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { NavigationPage } from "../page-objects/navigationPage"
+import { FormLayoutsPage } from "../page-objects/formLayoutPage";
+
 
 
 test.beforeEach(async ({ page }, testInfo) => {
@@ -14,4 +16,13 @@ test('navigate to form page', async({page}) => {
     await navigateTo.tooltipPage();
     await navigateTo.toastrPage();
     
+})
+
+test('parametrized methods', async({page}) => {
+    const navigateTo = new NavigationPage(page);
+    const onFormLayoutsPage = new FormLayoutsPage(page);
+
+    await navigateTo.formLayoutsPage();
+    await onFormLayoutsPage.submitUsingTheGridFormWithCredentialsAndOption('tst@test.com', 'Welcome1', 'Option 1');
+    await onFormLayoutsPage.submitInlineFormWithNameEmailAndCheckbox('Jéssica Luz', 'jessicaluz@test.com', true);
 })
