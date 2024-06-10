@@ -5,7 +5,7 @@ import { faker } from '@faker-js/faker'
 
 
 test.beforeEach(async ({ page }, testInfo) => {
-  await page.goto("http://localhost:4200/");
+  await page.goto("/");
 });
 
 test('navigate to form page', async({page}) => {
