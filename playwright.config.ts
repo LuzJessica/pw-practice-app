@@ -46,7 +46,7 @@ export default defineConfig<TestOptions>({
     {
       name: 'dev',
       use: { ...devices['Desktop Chrome'],
-      baseURL: 'http://localhost:4201/'
+      baseURL: 'http://localhost:4200/'
       },
     },
     {
@@ -75,6 +75,13 @@ export default defineConfig<TestOptions>({
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
     },
+    {
+      name: 'mobile',
+      testMatch: 'testMobile.spec.ts',
+      use:{
+        ...devices['iPhone 13 Pro']
+      }
+    }
 
     /* Test against mobile viewports. */
     // {
